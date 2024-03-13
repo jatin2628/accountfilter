@@ -1,57 +1,108 @@
-import { useState,useMemo } from 'react'
-import FileUpload from './components/FileUpload';
-import DataTable from './components/DataTable';
+import React, { useState, useMemo } from 'react';
 import * as XLSX from 'xlsx';
-import './App.css'
+import DataTable from './components/DataTable';
 
 function App() {
   const [columns, setColumns] = useState([]);
   const [data, setData] = useState([]);
-  const [filter, setFilter] = useState(false);
+  const [filterContact, setFilterContact] = useState(false);
+  const [highlight, setHighlight] = useState(false);
+  const [taxValuesGreaterThanZero, setTaxValuesGreaterThanZero] = useState(false);
+  const [taxValuesEqualToZero, setTaxValuesEqualToZero] = useState(false);
 
-  const handleDataProcessed = (rawData) => {
-    const headers = rawData[0];
-    const dataRows = rawData.slice(1);
-    
-    const columns = headers.map((col) => ({ Header: col, accessor: col }));
-    const data = dataRows.map((row) => row.reduce((obj, val, i) => ({
-      ...obj, [headers[i]]: val
-    }), {}));
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      const bstr = evt.target.result;
+      const wb = XLSX.read(bstr, { type: 'binary' });
+      const wsname = wb.SheetNames[0];
+      const ws = wb.Sheets[wsname];
+      const data = XLSX.utils.sheet_to_json(ws, { header: 1 });
+      const headers = data[0];
+      const dataRows = data.slice(1);
 
-    setColumns(columns);
-    setData(data);
+      setColumns(headers.map((col) => ({ Header: col, accessor: col })));
+      setData(dataRows.map((row) => row.reduce((obj, val, i) => ({
+        ...obj, [headers[i]]: val
+      }), {})));
+    };
+    reader.readAsBinaryString(file);
   };
 
   const filteredData = useMemo(() => {
-    if (filter) {
-      return data.filter((row) => row.Contact === 12222);
+    let result = data;
+
+    if (filterContact) {
+      result = result.filter((row) => row.contact === 1222);
     }
-    return data;
-  }, [data, filter]);
+
+    if (taxValuesGreaterThanZero) {
+      result = result.filter((row) => parseFloat(row["Integrated Tax"]) > 0 || parseFloat(row["Central Tax"]) > 0 || parseFloat(row["State Tax"]) > 0);
+    }
+
+    if (taxValuesEqualToZero) {
+      result = result.filter((row) => {
+        const integratedTax = parseFloat(row["Integrated Tax"]);
+        const centralTax = parseFloat(row["Central Tax"]);
+        const stateTax = parseFloat(row["State Tax"]);
+        return (isNaN(integratedTax) || integratedTax === 0) && (isNaN(centralTax) || centralTax === 0) && (isNaN(stateTax) || stateTax === 0);
+      });
+    }
+
+    return result;
+  }, [data, filterContact, taxValuesGreaterThanZero, taxValuesEqualToZero]);
 
   const handleDownload = (filtered = false) => {
     const exportData = filtered ? filteredData : data;
     const worksheet = XLSX.utils.json_to_sheet(exportData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Data");
-
-    // Write the workbook (Excel file)
     XLSX.writeFile(workbook, `export_${filtered ? 'filtered' : 'all'}.xlsx`);
   };
+
   return (
-    <div className="App">
-      <h1>Upload and Display Data</h1>
-      <FileUpload onDataProcessed={handleDataProcessed} />
-      <label>
-        <input type="checkbox" checked={filter} onChange={(e) => setFilter(e.target.checked)} />
-        Show only contacts with 1222
-      </label>
-      <DataTable columns={columns} data={filteredData} />
-      <button onClick={() => handleDownload(false)}>Download All Data</button>
-      <button onClick={() => handleDownload(true)}>Download Filtered Data</button>
+    <div cclassName="min-h-screen bg-gray-100 text-gray-900">
+      <div className="container mx-auto py-12">
+        <h1 className="text-3xl font-bold text-center mb-4">Upload and Display Data</h1>
+        <div className="flex justify-center">
+            <input
+              type="file"
+              className="file:mr-4 file:py-2 file:px-4
+                file:rounded-full file:border-0
+                file:text-sm file:font-semibold
+                file:bg-blue-500 file:text-white
+                hover:file:bg-blue-700
+              "
+              onChange={handleFileUpload}
+            />
+        </div>
+        <div className="flex gap-4 my-4">
+          <label className="flex items-center space-x-2">
+            <input type="checkbox" className="form-checkbox" checked={filterContact} onChange={(e) => setFilterContact(e.target.checked)} />
+            <span>Show only contacts with 1222</span>
+          </label>
+          <label className="flex items-center space-x-2">
+            <input type="checkbox" className="form-checkbox" checked={highlight} onChange={(e) => setHighlight(e.target.checked)} />
+            <span>Highlight rows with tax values</span>
+          </label>
+          <label className="flex items-center space-x-2">
+            <input type="checkbox" className="form-checkbox" checked={taxValuesGreaterThanZero} onChange={(e) => setTaxValuesGreaterThanZero(e.target.checked)} />
+            <span>Filter: Tax Values gr 0</span>
+          </label>
+          <label className="flex items-center space-x-2">
+            <input type="checkbox" className="form-checkbox" checked={taxValuesEqualToZero} onChange={(e) => setTaxValuesEqualToZero(e.target.checked)} />
+            <span>Filter: Tax Values = 0 or Empty</span>
+          </label>
+        </div>
+        <DataTable columns={columns} data={filteredData} highlight={highlight} />
+        <div className="flex gap-4 my-4">
+          <button onClick={() => handleDownload(false)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Download All Data</button>
+          <button onClick={() => handleDownload(true)} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Download Filtered Data</button>
+        </div>
+      </div>
     </div>
   );
 }
 
-
-export default App
+export default App;
