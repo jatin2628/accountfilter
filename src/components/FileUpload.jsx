@@ -17,7 +17,13 @@ const FileUpload = ({ onDataProcessed }) => {
   };
 
   return (
-    <input type="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onChange={handleFileUpload} />
+    <div className="file-upload-wrapper"> 
+    <input type="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onChange={handleFileUpload} style={{ display: 'none' }} />
+    <label htmlFor="file-upload" className="file-upload-label">
+        <span className="file-upload-btn">Choose File</span>
+        <span className="file-upload-text">{fileName || 'No file chosen...'}</span>
+      </label>
+    </div>
   );
 };
 
