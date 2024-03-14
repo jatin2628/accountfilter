@@ -19,8 +19,16 @@ function App() {
       const wsname = wb.SheetNames[0];
       const ws = wb.Sheets[wsname];
       const data = XLSX.utils.sheet_to_json(ws, { header: 1 });
-      const headers = data[0];
-      const dataRows = data.slice(1);
+      let headers ;
+      let dataRows ;
+
+      const headerRowIndex = data.findIndex(row => row.includes("Central Tax(₹)"));
+        if (headerRowIndex === -1) {
+          console.error("Undefined row")
+          return
+        }
+       headers = data[headerRowIndex];
+       dataRows = data.slice(headerRowIndex + 1);
 
       setColumns(headers.map((col) => ({ Header: col, accessor: col })));
       setData(dataRows.map((row) => row.reduce((obj, val, i) => ({
