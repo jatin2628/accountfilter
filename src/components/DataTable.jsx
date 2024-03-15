@@ -46,7 +46,7 @@
     
 
     return (
-        <div className="mt-8">
+        <div className="overflow-x-auto mt-8">
         <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
         <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
             <table {...getTableProps()} className="min-w-full divide-y divide-gray-200">
@@ -54,7 +54,7 @@
                 {headerGroups.map(headerGroup => (
                     <tr {...headerGroup.getHeaderGroupProps()}>
                     {headerGroup.headers.map(column => (
-                        <th {...column.getHeaderProps()} className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">{column.render('Header')}</th>
+                        <th {...column.getHeaderProps()} className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider md:px-6">{column.render('Header')}</th>
                     ))}
                     </tr>
                 ))}
@@ -65,7 +65,7 @@
                     return (
                     <tr {...row.getRowProps()} className={highlightRow(row)}>
                         {row.cells.map(cell => (
-                        <td {...cell.getCellProps()} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{cell.render('Cell')}</td>
+                        <td {...cell.getCellProps()} className="px-3 py-4 whitespace-nowrap text-sm text-gray-900 md:px-6">{cell.render('Cell')}</td>
                         ))}
                     </tr>
                     );

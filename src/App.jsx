@@ -82,9 +82,9 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 text-gray-900">
-      <div className="container  mx-auto py-12">
-        <h1 className="text-4xl font-bold text-center mb-6">3B2 BILL VERIFIER</h1>
-        <div className="flex justify-center my-6">
+      <div className="container mx-auto py-4 px-4 sm:px-6 lg:px-8">
+        <h1 className="text-4xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-center mb-6">3B2 BILL VERIFIER</h1>
+        <div className="flex justify-center my-4 flex-wrap">
             <input
               type="file"
               className="file:mr-4 file:py-2 file:px-4
@@ -92,11 +92,11 @@ function App() {
                 file:text-sm file:font-semibold
                 file:bg-blue-500 file:text-white
                 hover:file:bg-blue-700
-              "
+                mb-4 md:mb-0"
               onChange={handleFileUpload}
             />
         </div>
-        <div className="flex gap-4 my-4 justify-center">
+        <div className="flex gap-4 my-4 justify-center flex-wrap">
         <button
           className={`flex items-center space-x-2 px-4 py-2 font-semibold rounded-full transition-colors ${
             highlight ? "bg-blue-500 text-white" : "bg-white text-blue-500 border border-blue-500"
@@ -123,7 +123,7 @@ function App() {
         </button>
         </div>
         <DataTable columns={columns} data={filteredData} highlight={highlight} />
-        <div className="flex gap-4 my-4 justify-center">
+        <div className="flex gap-4 my-4 justify-center flex-wrap">
           <button onClick={() => handleDownload(false)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Download All Data</button>
           <button onClick={() => handleDownload(true)} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Download Filtered Data</button>
         </div>
