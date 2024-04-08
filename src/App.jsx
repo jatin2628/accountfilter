@@ -80,6 +80,14 @@ function App() {
     XLSX.writeFile(workbook, `export_${filtered ? 'filtered' : 'all'}.xlsx`);
   };
 
+  // In App component
+const handleCellChange = (rowIndex, columnId, value) => {
+  const newData = [...data];
+  newData[rowIndex][columnId] = value;
+  setData(newData);
+};
+
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 text-gray-900">
       <div className="container mx-auto py-4 px-4 sm:px-6 lg:px-8">
@@ -122,7 +130,7 @@ function App() {
           <span>UnClaimed</span>
         </button>
         </div>
-        <DataTable columns={columns} data={filteredData} highlight={highlight} />
+        <DataTable columns={columns} data={filteredData} highlight={highlight} onCellChange={handleCellChange} />
         <div className="flex gap-4 my-4 justify-center flex-wrap">
           <button onClick={() => handleDownload(false)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Download All Data</button>
           <button onClick={() => handleDownload(true)} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Download Filtered Data</button>

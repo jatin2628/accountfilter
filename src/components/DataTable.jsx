@@ -3,7 +3,7 @@
     import { FaAngleDoubleLeft, FaAngleLeft, FaAngleRight, FaAngleDoubleRight } from 'react-icons/fa';
 
 
-    const DataTable = ({ columns, data, highlight }) => {
+    const DataTable = ({ columns, data, highlight, onCellChange }) => {
     const {
         getTableProps,
         getTableBodyProps,
@@ -65,7 +65,13 @@
                     return (
                     <tr {...row.getRowProps()} className={highlightRow(row)}>
                         {row.cells.map(cell => (
-                        <td {...cell.getCellProps()} className="px-3 py-4 whitespace-nowrap text-sm text-gray-900 md:px-6">{cell.render('Cell')}</td>
+                        <td {...cell.getCellProps()} className="px-3 py-4 whitespace-nowrap text-sm text-gray-900 md:px-6">
+                        <input
+                            value={cell.value}
+                            onChange={(e) => handleCellChange(e, cell.row.index, cell.column.id)}
+                            className="w-full h-full text-black"
+                        />
+                        </td>
                         ))}
                     </tr>
                     );
