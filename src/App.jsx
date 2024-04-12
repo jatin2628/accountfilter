@@ -1,6 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import * as XLSX from 'xlsx';
 import DataTable from './components/DataTable';
+import Footer from './components/Footer';
+import Navbar from './components/Header';
 
 function App() {
   const [columns, setColumns] = useState([]);
@@ -89,6 +91,7 @@ const handleCellChange = (rowIndex, columnId, value) => {
 
 
   return (
+    <><Navbar />
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 text-gray-900">
       <div className="container mx-auto py-4 px-4 sm:px-6 lg:px-8">
         <h1 className="text-4xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-center mb-6">3B2 BILL VERIFIER</h1>
@@ -137,6 +140,8 @@ const handleCellChange = (rowIndex, columnId, value) => {
         </div>
       </div>
     </div>
+    <Footer />
+    </>
   );
 }
 
